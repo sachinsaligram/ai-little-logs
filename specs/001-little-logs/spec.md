@@ -15,6 +15,8 @@
 - Q: Is the app designed primarily for mobile, or equally for mobile and desktop? → A: Mobile-first. The phone is the primary design target — every screen must pass the one-handed mobile test first. Desktop is a valid secondary surface (same browser URL) but is not the primary constraint.
 - Q: In Phase 1, does the web UI (logging + insights) work on any device via URL while MCP is local stdio + Claude Desktop on desktop only? → A: Yes. Web UI = any device via browser URL (mobile primary). MCP Phase 1 = local stdio transport, requires Claude Desktop running on a desktop/laptop. These are independent access paths to the same database. No remote MCP until Phase 3.
 - Q: Is the app distributed via browser URL or app store? → A: Browser URL. The canonical entry point is a web URL accessible from any browser. PWA install to the phone home screen is an optional convenience layer — no App Store, no native build required.
+- Q: How is the baby profile created in a live production deployment (Vercel starts with an empty database)? → A: One-time setup screen shown on first sign-in — the authenticated user enters the baby's name and date of birth before accessing any log features. The app detects an empty baby table and redirects to setup automatically.
+- Q: Does v1 support editing or deleting past log entries? → A: No. Log entries are immutable once saved. FR-006 "editing a sleep entry" means annotating optional fields (location, quality rating) at the moment the session ends — not retroactive modification. No edit or delete UI is provided for any event type in v1.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -33,6 +35,7 @@ A parent opens the app on their phone, one-handed, while holding a baby. They ne
 3. **Given** the parent is on the home screen, **When** they tap "Log feed", select type (breast/bottle/solid), and confirm, **Then** a feed is recorded — completed in 3 taps or fewer.
 4. **Given** the parent is on the home screen, **When** they tap "Log nappy", select type (wet/dirty/both), and confirm, **Then** a nappy change is recorded — completed in 3 taps or fewer.
 5. **Given** the parent is not signed in, **When** they open the app, **Then** they are shown a sign-in prompt and cannot access any logs until authenticated.
+6. **Given** the parent signs in for the first time (no baby profile exists), **When** authentication succeeds, **Then** they are redirected to a setup screen to enter the baby's name and date of birth before reaching the home screen.
 
 ---
 
@@ -89,11 +92,17 @@ A parent (or demo audience) opens Claude Desktop or Claude.ai, and asks question
 - **FR-002**: Users MUST be able to sign in using their Google account without creating a separate password.
 - **FR-003**: Authenticated sessions MUST persist across browser restarts so the parent is not re-prompted on every visit.
 
+**Baby Profile Setup**
+
+- **FR-004a**: On first sign-in, if no baby profile exists in the database, the app MUST redirect the authenticated user to a one-time setup screen before granting access to any log features.
+- **FR-004b**: The setup screen MUST collect the baby's name and date of birth and persist a baby record before proceeding.
+- **FR-004c**: After setup is complete, the user MUST be redirected to the home screen automatically. Setup MUST NOT be shown again once a baby record exists.
+
 **Event Logging — Sleep**
 
 - **FR-004**: Users MUST be able to start a sleep session with a single primary action from the home screen.
 - **FR-005**: Users MUST be able to end an in-progress sleep session; duration MUST be calculated automatically.
-- **FR-006**: Users MUST be able to optionally record sleep location and a quality rating (1–5) when logging or editing a sleep entry.
+- **FR-006**: Users MUST be able to optionally record sleep location and a quality rating (1–5) when ending a sleep session. Log entries are immutable once saved; no retroactive editing is supported in v1.
 - **FR-007**: An in-progress sleep session MUST be recoverable after the app is closed and reopened.
 
 **Event Logging — Feeds**
@@ -154,10 +163,11 @@ A parent (or demo audience) opens Claude Desktop or Claude.ai, and asks question
 
 ## Assumptions
 
-- There is exactly one baby being tracked. The data model supports multiple babies but the UI and all v1 features assume a single baby.
+- There is exactly one baby being tracked. The data model supports multiple babies but the UI and all v1 features assume a single baby. The baby record is created via a one-time setup screen shown automatically on first sign-in when no baby profile exists.
 - The parent is the sole user; no sharing, multi-device conflict resolution, or concurrent sessions need to be handled.
 - Connectivity is assumed for all logging and AI features; network is required to write or read data.
 - All timestamps are stored in UTC and displayed in the device's local timezone.
 - The two access paths are entirely independent: (1) the web UI is accessible via browser URL from any device (mobile is the primary design target); (2) the MCP server in Phase 1 runs locally via stdio transport alongside Claude Desktop on a desktop/laptop. Mobile logging happens exclusively through the web UI. Remote HTTP MCP is a Phase 3 concern.
 - "Pattern analysis" means statistical observations about timing and frequency (e.g., sleep windows, feed intervals) — not medical advice or clinical recommendations.
 - The concern flag on a nappy entry is informational only; the app does not provide medical guidance.
+- Log entries (sleep, feed, nappy) are immutable once saved. There is no edit or delete capability for any event type in v1. Parents must re-log if a mistake is made.

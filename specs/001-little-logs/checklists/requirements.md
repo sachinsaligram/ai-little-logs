@@ -31,4 +31,4 @@
 
 ## Notes
 
-All items pass. Clarification session 2026-06-08: confirmed mobile-first web URL app, local stdio MCP (Phase 1) on desktop only, PWA install is optional convenience. Ready for `/speckit-plan`.
+All items pass. Clarification session 2026-06-08: confirmed mobile-first web URL app, local stdio MCP (Phase 1) on desktop only, PWA install is optional convenience. Additional clarifications 2026-06-08: baby profile created via one-time setup screen on first sign-in (FR-004a–c added); log entries are immutable in v1 — no edit/delete for any event type (FR-006 updated, Assumptions updated). Ready for `/speckit-tasks`.
