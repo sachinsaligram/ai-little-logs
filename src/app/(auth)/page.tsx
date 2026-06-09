@@ -1,12 +1,12 @@
 "use server";
 
 import { db } from "@/db";
-import { babies, sleep_logs, feed_logs, nappy_logs } from "@/db/schema";
+import { babies, sleep_logs, feed_logs, diaper_logs } from "@/db/schema";
 import { and, desc, eq, isNull, isNotNull } from "drizzle-orm";
 import { handleSignOut } from "./actions";
 import { LogSleepButton } from "@/components/LogSleepButton";
 import { LogFeedSheetTrigger } from "@/components/LogFeedSheetTrigger";
-import { LogNappySheetTrigger } from "@/components/LogNappySheetTrigger";
+import { LogDiaperSheetTrigger } from "@/components/LogDiaperSheetTrigger";
 import { LocalTime } from "@/components/LocalTime";
 
 function formatDuration(min: number): string {
@@ -24,10 +24,10 @@ export default async function HomePage() {
   let openSession: { id: string; started_at: string } | null = null;
   let recentSleep: { started_at: string; duration_min: number | null }[] = [];
   let recentFeed: { started_at: string; type: string; side: string | null }[] = [];
-  let recentNappy: { logged_at: string; type: string }[] = [];
+  let recentDiaper: { logged_at: string; type: string }[] = [];
 
   if (baby) {
-    const [openResult, sleepResult, feedResult, nappyResult] = await Promise.all([
+    const [openResult, sleepResult, feedResult, diaperResult] = await Promise.all([
       db.select({ id: sleep_logs.id, started_at: sleep_logs.started_at })
         .from(sleep_logs)
         .where(and(eq(sleep_logs.baby_id, baby.id), isNull(sleep_logs.ended_at)))
@@ -42,17 +42,17 @@ export default async function HomePage() {
         .where(eq(feed_logs.baby_id, baby.id))
         .orderBy(desc(feed_logs.started_at))
         .limit(5),
-      db.select({ logged_at: nappy_logs.logged_at, type: nappy_logs.type })
-        .from(nappy_logs)
-        .where(eq(nappy_logs.baby_id, baby.id))
-        .orderBy(desc(nappy_logs.logged_at))
+      db.select({ logged_at: diaper_logs.logged_at, type: diaper_logs.type })
+        .from(diaper_logs)
+        .where(eq(diaper_logs.baby_id, baby.id))
+        .orderBy(desc(diaper_logs.logged_at))
         .limit(5),
     ]);
 
     openSession = openResult[0] ?? null;
     recentSleep = sleepResult;
     recentFeed = feedResult;
-    recentNappy = nappyResult;
+    recentDiaper = diaperResult;
   }
 
   const sectionHeadingStyle: React.CSSProperties = {
@@ -152,13 +152,13 @@ export default async function HomePage() {
         <LogFeedSheetTrigger />
       </section>
 
-      <section aria-labelledby="nappy-section-heading">
-        <h2 id="nappy-section-heading" style={{ ...sectionHeadingStyle, marginBottom: "var(--space-3)" }}>
+      <section aria-labelledby="diaper-section-heading">
+        <h2 id="diaper-section-heading" style={{ ...sectionHeadingStyle, marginBottom: "var(--space-3)" }}>
           💧 Diaper
         </h2>
-        {recentNappy.length > 0 && (
+        {recentDiaper.length > 0 && (
           <ul style={{ listStyle: "none", marginBottom: "var(--space-3)" }}>
-            {recentNappy.map((n, i) => (
+            {recentDiaper.map((n, i) => (
               <li key={i} style={logRowStyle}>
                 <span><LocalTime iso={n.logged_at} /></span>
                 <span style={{ color: "var(--color-text)" }}>· {n.type === "dirty" ? "Poop" : n.type.charAt(0).toUpperCase() + n.type.slice(1)}</span>
@@ -166,7 +166,7 @@ export default async function HomePage() {
             ))}
           </ul>
         )}
-        <LogNappySheetTrigger />
+        <LogDiaperSheetTrigger />
       </section>
     </div>
   );

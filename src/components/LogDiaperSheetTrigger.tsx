@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogNappySheet } from "./LogNappySheet";
+import { LogDiaperSheet } from "./LogDiaperSheet";
 
-export function LogNappySheetTrigger() {
+export function LogDiaperSheetTrigger() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -28,7 +28,7 @@ export function LogNappySheetTrigger() {
         Log diaper
       </button>
       {open && (
-        <LogNappySheet
+        <LogDiaperSheet
           onClose={() => setOpen(false)}
           onLogged={() => { setOpen(false); router.refresh(); }}
         />

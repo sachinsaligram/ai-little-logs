@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { db } from "@/db/index";
-import { babies, sleep_logs, feed_logs, nappy_logs } from "@/db/schema";
+import { babies, sleep_logs, feed_logs, diaper_logs } from "@/db/schema";
 import { eq, gte, and } from "drizzle-orm";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   since.setDate(since.getDate() - days);
   const sinceISO = since.toISOString();
 
-  const [sleepData, feedData, nappyData] = await Promise.all([
+  const [sleepData, feedData, diaperData] = await Promise.all([
     db.select({
       started_at: sleep_logs.started_at,
       ended_at: sleep_logs.ended_at,
@@ -45,10 +45,10 @@ export async function POST(req: NextRequest) {
       amount_ml: feed_logs.amount_ml,
     }).from(feed_logs).where(and(eq(feed_logs.baby_id, babyId), gte(feed_logs.started_at, sinceISO))),
     db.select({
-      logged_at: nappy_logs.logged_at,
-      type: nappy_logs.type,
-      concern_flag: nappy_logs.concern_flag,
-    }).from(nappy_logs).where(and(eq(nappy_logs.baby_id, babyId), gte(nappy_logs.logged_at, sinceISO))),
+      logged_at: diaper_logs.logged_at,
+      type: diaper_logs.type,
+      concern_flag: diaper_logs.concern_flag,
+    }).from(diaper_logs).where(and(eq(diaper_logs.baby_id, babyId), gte(diaper_logs.logged_at, sinceISO))),
   ]);
 
   const totalSleepMin = sleepData
@@ -67,8 +67,8 @@ ${sleepData.slice(0, 30).map((s) => `  ${s.started_at}: ${s.duration_min ? s.dur
 FEEDS — ${feedData.length} total:
 ${feedData.slice(0, 30).map((f) => `  ${f.started_at}: ${f.type}${f.side ? " (" + f.side + ")" : ""}${f.amount_ml ? " " + f.amount_ml + "ml" : ""}`).join("\n") || "  No feeds logged"}
 
-DIAPERS — ${nappyData.length} total:
-${nappyData.slice(0, 30).map((n) => `  ${n.logged_at}: ${n.type}${n.concern_flag ? " ⚠️" : ""}`).join("\n") || "  No diapers logged"}`;
+DIAPERS — ${diaperData.length} total:
+${diaperData.slice(0, 30).map((n) => `  ${n.logged_at}: ${n.type}${n.concern_flag ? " ⚠️" : ""}`).join("\n") || "  No diapers logged"}`;
 
   try {
     const response = await client.messages.create({

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/index";
-import { babies, sleep_logs, feed_logs, nappy_logs } from "@/db/schema";
+import { babies, sleep_logs, feed_logs, diaper_logs } from "@/db/schema";
 import { eq, gte, lte, gt, and } from "drizzle-orm";
 
 function sevenDaysAgo(): string {
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   const babyId = babyRows[0].id;
 
   type EventItem = {
-    type: "sleep" | "feed" | "nappy";
+    type: "sleep" | "feed" | "diaper";
     id: string;
     event_time: string;
     [key: string]: unknown;
@@ -67,20 +67,20 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  if (type === "nappy" || type === "all") {
+  if (type === "diaper" || type === "all") {
     const conditions = [
-      eq(nappy_logs.baby_id, babyId),
-      gte(nappy_logs.logged_at, from),
-      lte(nappy_logs.logged_at, to),
+      eq(diaper_logs.baby_id, babyId),
+      gte(diaper_logs.logged_at, from),
+      lte(diaper_logs.logged_at, to),
     ];
-    if (cursor) conditions.push(gt(nappy_logs.id, cursor));
+    if (cursor) conditions.push(gt(diaper_logs.id, cursor));
     const rows = await db
       .select()
-      .from(nappy_logs)
+      .from(diaper_logs)
       .where(and(...conditions))
       .limit(limit);
     rows.forEach((r) =>
-      items.push({ ...r, type: "nappy", event_time: r.logged_at })
+      items.push({ ...r, type: "diaper", event_time: r.logged_at })
     );
   }
 

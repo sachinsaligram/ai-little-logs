@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/index";
-import { babies, nappy_logs } from "@/db/schema";
+import { babies, diaper_logs } from "@/db/schema";
 import { newId } from "@/lib/ulid";
 
-const NAPPY_TYPES = ["wet", "dirty", "both", "dry"] as const;
+const DIAPER_TYPES = ["wet", "dirty", "both", "dry"] as const;
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   if (!body.logged_at) {
     return NextResponse.json({ error: "logged_at is required" }, { status: 422 });
   }
-  if (!body.type || !NAPPY_TYPES.includes(body.type)) {
+  if (!body.type || !DIAPER_TYPES.includes(body.type)) {
     return NextResponse.json({ error: "type must be wet, dirty, both, or dry" }, { status: 422 });
   }
 
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   const babyId = babyRows[0].id;
 
   const id = newId();
-  await db.insert(nappy_logs).values({
+  await db.insert(diaper_logs).values({
     id,
     baby_id: babyId,
     logged_at: body.logged_at,

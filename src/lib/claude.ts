@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { db } from "@/db/index";
-import { babies, sleep_logs, feed_logs, nappy_logs } from "@/db/schema";
+import { babies, sleep_logs, feed_logs, diaper_logs } from "@/db/schema";
 import { eq, gte, and } from "drizzle-orm";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -20,7 +20,7 @@ export async function generateInsights(days: number): Promise<InsightsResult> {
   const sinceISO = since.toISOString();
 
   // Fetch aggregated data (no free-text notes for privacy)
-  const [sleepData, feedData, nappyData] = await Promise.all([
+  const [sleepData, feedData, diaperData] = await Promise.all([
     db
       .select({
         started_at: sleep_logs.started_at,
@@ -42,12 +42,12 @@ export async function generateInsights(days: number): Promise<InsightsResult> {
       .where(and(eq(feed_logs.baby_id, babyId), gte(feed_logs.started_at, sinceISO))),
     db
       .select({
-        logged_at: nappy_logs.logged_at,
-        type: nappy_logs.type,
-        concern_flag: nappy_logs.concern_flag,
+        logged_at: diaper_logs.logged_at,
+        type: diaper_logs.type,
+        concern_flag: diaper_logs.concern_flag,
       })
-      .from(nappy_logs)
-      .where(and(eq(nappy_logs.baby_id, babyId), gte(nappy_logs.logged_at, sinceISO))),
+      .from(diaper_logs)
+      .where(and(eq(diaper_logs.baby_id, babyId), gte(diaper_logs.logged_at, sinceISO))),
   ]);
 
   const totalSleepMin = sleepData
@@ -60,12 +60,12 @@ export async function generateInsights(days: number): Promise<InsightsResult> {
     solid: feedData.filter((f) => f.type === "solid").length,
   };
 
-  const nappyCounts = {
-    wet: nappyData.filter((n) => n.type === "wet").length,
-    dirty: nappyData.filter((n) => n.type === "dirty").length,
-    both: nappyData.filter((n) => n.type === "both").length,
-    dry: nappyData.filter((n) => n.type === "dry").length,
-    concerns: nappyData.filter((n) => n.concern_flag === 1).length,
+  const diaperCounts = {
+    wet: diaperData.filter((n) => n.type === "wet").length,
+    dirty: diaperData.filter((n) => n.type === "dirty").length,
+    both: diaperData.filter((n) => n.type === "both").length,
+    dry: diaperData.filter((n) => n.type === "dry").length,
+    concerns: diaperData.filter((n) => n.concern_flag === 1).length,
   };
 
   const prompt = `You are analyzing ${days} days of baby tracking data. Here is the aggregated data:
@@ -77,8 +77,8 @@ FEEDS (${feedData.length} total):
 - Breast: ${feedCounts.breast}, Bottle: ${feedCounts.bottle}, Solid: ${feedCounts.solid}
 ${feedData.slice(0, 20).map((f) => `- ${f.started_at}: ${f.type}${f.side ? " (" + f.side + ")" : ""}${f.amount_ml ? " " + f.amount_ml + "ml" : ""}`).join("\n") || "No feeds logged"}
 
-DIAPERS (${nappyData.length} total):
-- Wet: ${nappyCounts.wet}, Poop: ${nappyCounts.dirty}, Both: ${nappyCounts.both}, Dry: ${nappyCounts.dry}, Concerns: ${nappyCounts.concerns}
+DIAPERS (${diaperData.length} total):
+- Wet: ${diaperCounts.wet}, Poop: ${diaperCounts.dirty}, Both: ${diaperCounts.both}, Dry: ${diaperCounts.dry}, Concerns: ${diaperCounts.concerns}
 
 Based on this data, provide:
 1. A concise 2-3 sentence summary of the baby's routine over the past ${days} days

@@ -1,6 +1,6 @@
 import { EventHistory } from "@/components/EventHistory";
 import { db } from "@/db";
-import { babies, sleep_logs, feed_logs, nappy_logs } from "@/db/schema";
+import { babies, sleep_logs, feed_logs, diaper_logs } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
 const DEFAULT_LIMIT = 50;
@@ -17,7 +17,7 @@ export default async function HistoryPage() {
     );
   }
 
-  const [sleeps, feeds, nappies] = await Promise.all([
+  const [sleeps, feeds, diapers] = await Promise.all([
     db.select().from(sleep_logs)
       .where(eq(sleep_logs.baby_id, baby.id))
       .orderBy(desc(sleep_logs.started_at))
@@ -26,9 +26,9 @@ export default async function HistoryPage() {
       .where(eq(feed_logs.baby_id, baby.id))
       .orderBy(desc(feed_logs.started_at))
       .limit(DEFAULT_LIMIT),
-    db.select().from(nappy_logs)
-      .where(eq(nappy_logs.baby_id, baby.id))
-      .orderBy(desc(nappy_logs.logged_at))
+    db.select().from(diaper_logs)
+      .where(eq(diaper_logs.baby_id, baby.id))
+      .orderBy(desc(diaper_logs.logged_at))
       .limit(DEFAULT_LIMIT),
   ]);
 
@@ -36,7 +36,7 @@ export default async function HistoryPage() {
   const items: any[] = [
     ...sleeps.map((s) => ({ ...s, type: "sleep", event_time: s.started_at })),
     ...feeds.map((f) => ({ ...f, type: "feed", event_time: f.started_at })),
-    ...nappies.map((n) => ({ ...n, type: "nappy", event_time: n.logged_at })),
+    ...diapers.map((n) => ({ ...n, type: "diaper", event_time: n.logged_at })),
   ].sort((a, b) => (a.event_time < b.event_time ? 1 : -1)).slice(0, DEFAULT_LIMIT);
 
   return (

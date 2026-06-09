@@ -139,9 +139,9 @@ async function handleLogFeed(args: Record<string, unknown>): Promise<string> {
   return `Logged ${feedType} feed${detail} starting at ${formatTime(startedAt)}. ID: ${id}`;
 }
 
-async function handleLogNappy(args: Record<string, unknown>): Promise<string> {
-  const nappyType = args.type as string;
-  if (!nappyType || !["wet", "dirty", "both", "dry"].includes(nappyType)) {
+async function handleLogDiaper(args: Record<string, unknown>): Promise<string> {
+  const diaperType = args.type as string;
+  if (!diaperType || !["wet", "dirty", "both", "dry"].includes(diaperType)) {
     return "Error: type must be 'wet', 'dirty', 'both', or 'dry'";
   }
 
@@ -151,18 +151,18 @@ async function handleLogNappy(args: Record<string, unknown>): Promise<string> {
   const loggedAt = (args.logged_at as string) ?? new Date().toISOString();
   const id = newId();
 
-  await db.insert(schema.nappy_logs).values({
+  await db.insert(schema.diaper_logs).values({
     id,
     baby_id: babyId,
     logged_at: loggedAt,
-    type: nappyType,
+    type: diaperType,
     colour: (args.colour as string) ?? null,
     consistency: (args.consistency as string) ?? null,
     concern_flag: args.concern_flag ? 1 : 0,
     notes: (args.notes as string) ?? null,
   });
 
-  return `Logged ${nappyType} nappy at ${formatTime(loggedAt)}. ID: ${id}`;
+  return `Logged ${diaperType} diaper at ${formatTime(loggedAt)}. ID: ${id}`;
 }
 
 async function handleGetSummary(args: Record<string, unknown>): Promise<string> {
@@ -179,7 +179,7 @@ async function handleGetSummary(args: Record<string, unknown>): Promise<string> 
   const since = new Date(anchor.getTime() - hours * 3600000).toISOString();
   const dateStr = anchor.toISOString().slice(0, 10);
 
-  const [sleepRows, feedRows, nappyRows] = await Promise.all([
+  const [sleepRows, feedRows, diaperRows] = await Promise.all([
     db
       .select({ started_at: schema.sleep_logs.started_at, ended_at: schema.sleep_logs.ended_at, duration_min: schema.sleep_logs.duration_min })
       .from(schema.sleep_logs)
@@ -189,9 +189,9 @@ async function handleGetSummary(args: Record<string, unknown>): Promise<string> 
       .from(schema.feed_logs)
       .where(and(eq(schema.feed_logs.baby_id, babyId), gte(schema.feed_logs.started_at, since))),
     db
-      .select({ type: schema.nappy_logs.type })
-      .from(schema.nappy_logs)
-      .where(and(eq(schema.nappy_logs.baby_id, babyId), gte(schema.nappy_logs.logged_at, since))),
+      .select({ type: schema.diaper_logs.type })
+      .from(schema.diaper_logs)
+      .where(and(eq(schema.diaper_logs.baby_id, babyId), gte(schema.diaper_logs.logged_at, since))),
   ]);
 
   const totalSleepMin = sleepRows
@@ -201,23 +201,23 @@ async function handleGetSummary(args: Record<string, unknown>): Promise<string> 
   const breastFeeds = feedRows.filter((f) => f.type === "breast").length;
   const bottleFeeds = feedRows.filter((f) => f.type === "bottle").length;
   const solidFeeds = feedRows.filter((f) => f.type === "solid").length;
-  const wetNappies = nappyRows.filter((n) => n.type === "wet").length;
-  const dirtyNappies = nappyRows.filter((n) => n.type === "dirty").length;
-  const bothNappies = nappyRows.filter((n) => n.type === "both").length;
+  const wetNappies = diaperRows.filter((n) => n.type === "wet").length;
+  const dirtyNappies = diaperRows.filter((n) => n.type === "dirty").length;
+  const bothNappies = diaperRows.filter((n) => n.type === "both").length;
 
   const label = period === "day" ? `${dateStr} (past 24 hours)` : `week ending ${dateStr}`;
 
   return `Summary for ${label}:
 • Sleep: ${formatDuration(totalSleepMin)} across ${sleepSessionCount} session${sleepSessionCount !== 1 ? "s" : ""}
 • Feeds: ${feedRows.length} total (${breastFeeds} breast, ${bottleFeeds} bottle, ${solidFeeds} solid)
-• Nappies: ${nappyRows.length} changes (${wetNappies} wet, ${dirtyNappies} dirty, ${bothNappies} both)`;
+• Diapers: ${diaperRows.length} changes (${wetNappies} wet, ${dirtyNappies} dirty, ${bothNappies} both)`;
 }
 
 async function handleGetEvents(args: Record<string, unknown>): Promise<string> {
   const eventType = args.type as string;
   const from = args.from as string;
-  if (!eventType || !["sleep", "feed", "nappy", "all"].includes(eventType)) {
-    return "Error: type must be 'sleep', 'feed', 'nappy', or 'all'";
+  if (!eventType || !["sleep", "feed", "diaper", "all"].includes(eventType)) {
+    return "Error: type must be 'sleep', 'feed', 'diaper', or 'all'";
   }
   if (!from) return "Error: from is required";
 
@@ -256,16 +256,16 @@ async function handleGetEvents(args: Record<string, unknown>): Promise<string> {
     });
   }
 
-  if (eventType === "nappy" || eventType === "all") {
+  if (eventType === "diaper" || eventType === "all") {
     const rows = await db
       .select()
-      .from(schema.nappy_logs)
-      .where(and(eq(schema.nappy_logs.baby_id, babyId), gte(schema.nappy_logs.logged_at, from), lte(schema.nappy_logs.logged_at, to)))
-      .orderBy(desc(schema.nappy_logs.logged_at))
+      .from(schema.diaper_logs)
+      .where(and(eq(schema.diaper_logs.baby_id, babyId), gte(schema.diaper_logs.logged_at, from), lte(schema.diaper_logs.logged_at, to)))
+      .orderBy(desc(schema.diaper_logs.logged_at))
       .limit(limit);
     rows.forEach((r) => {
       const concern = r.concern_flag ? " [!]" : "";
-      lines.push(`[nappy] ${r.logged_at.slice(0, 16).replace("T", " ")} · ${r.type}${concern}${r.colour ? " · " + r.colour : ""}`);
+      lines.push(`[diaper] ${r.logged_at.slice(0, 16).replace("T", " ")} · ${r.type}${concern}${r.colour ? " · " + r.colour : ""}`);
     });
   }
 
@@ -288,19 +288,19 @@ async function handleAnalyzePatterns(args: Record<string, unknown>): Promise<str
   since.setDate(since.getDate() - days);
   const sinceISO = since.toISOString();
 
-  const [sleepRows, feedRows, nappyRows] = await Promise.all([
+  const [sleepRows, feedRows, diaperRows] = await Promise.all([
     db.select({ started_at: schema.sleep_logs.started_at, duration_min: schema.sleep_logs.duration_min, quality: schema.sleep_logs.quality })
       .from(schema.sleep_logs)
       .where(and(eq(schema.sleep_logs.baby_id, babyId), gte(schema.sleep_logs.started_at, sinceISO))),
     db.select({ started_at: schema.feed_logs.started_at, type: schema.feed_logs.type, amount_ml: schema.feed_logs.amount_ml })
       .from(schema.feed_logs)
       .where(and(eq(schema.feed_logs.baby_id, babyId), gte(schema.feed_logs.started_at, sinceISO))),
-    db.select({ logged_at: schema.nappy_logs.logged_at, type: schema.nappy_logs.type, concern_flag: schema.nappy_logs.concern_flag })
-      .from(schema.nappy_logs)
-      .where(and(eq(schema.nappy_logs.baby_id, babyId), gte(schema.nappy_logs.logged_at, sinceISO))),
+    db.select({ logged_at: schema.diaper_logs.logged_at, type: schema.diaper_logs.type, concern_flag: schema.diaper_logs.concern_flag })
+      .from(schema.diaper_logs)
+      .where(and(eq(schema.diaper_logs.baby_id, babyId), gte(schema.diaper_logs.logged_at, sinceISO))),
   ]);
 
-  const total = sleepRows.length + feedRows.length + nappyRows.length;
+  const total = sleepRows.length + feedRows.length + diaperRows.length;
   if (total === 0) {
     return `Not enough data to identify patterns for the past ${days} days. Try logging consistently for at least 3 days.`;
   }
@@ -315,8 +315,8 @@ Feeds (${feedRows.length} total):
 - breast: ${feedRows.filter((f) => f.type === "breast").length}, bottle: ${feedRows.filter((f) => f.type === "bottle").length}, solid: ${feedRows.filter((f) => f.type === "solid").length}
 ${feedRows.slice(0, 30).map((f) => `  ${f.started_at.slice(0, 16)}: ${f.type}${f.amount_ml ? " " + f.amount_ml + "ml" : ""}`).join("\n")}
 
-Nappies (${nappyRows.length} total):
-- wet: ${nappyRows.filter((n) => n.type === "wet").length}, dirty: ${nappyRows.filter((n) => n.type === "dirty").length}, both: ${nappyRows.filter((n) => n.type === "both").length}
+Diapers (${diaperRows.length} total):
+- wet: ${diaperRows.filter((n) => n.type === "wet").length}, dirty: ${diaperRows.filter((n) => n.type === "dirty").length}, both: ${diaperRows.filter((n) => n.type === "both").length}
 
 Provide a concise plain-text pattern analysis. Note any timing patterns, frequency patterns, or correlations you observe.`;
 
@@ -376,8 +376,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       },
     },
     {
-      name: "log_nappy",
-      description: "Log a nappy change",
+      name: "log_diaper",
+      description: "Log a diaper change",
       inputSchema: {
         type: "object",
         properties: {
@@ -409,7 +409,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       inputSchema: {
         type: "object",
         properties: {
-          type: { type: "string", enum: ["sleep", "feed", "nappy", "all"] },
+          type: { type: "string", enum: ["sleep", "feed", "diaper", "all"] },
           from: { type: "string", description: "ISO 8601. Start of range. Required." },
           to: { type: "string", description: "ISO 8601. End of range. Defaults to now." },
           limit: { type: "integer", minimum: 1, maximum: 100, description: "Default 20." },
@@ -424,7 +424,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         type: "object",
         properties: {
           days: { type: "integer", minimum: 1, maximum: 30, description: "Days to analyse. Default 7." },
-          focus: { type: "string", enum: ["sleep", "feed", "nappy", "all"], description: "Default 'all'." },
+          focus: { type: "string", enum: ["sleep", "feed", "diaper", "all"], description: "Default 'all'." },
         },
       },
     },
@@ -439,7 +439,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   switch (name) {
     case "log_sleep":        result = await handleLogSleep(toolArgs); break;
     case "log_feed":         result = await handleLogFeed(toolArgs); break;
-    case "log_nappy":        result = await handleLogNappy(toolArgs); break;
+    case "log_diaper":        result = await handleLogDiaper(toolArgs); break;
     case "get_summary":      result = await handleGetSummary(toolArgs); break;
     case "get_events":       result = await handleGetEvents(toolArgs); break;
     case "analyze_patterns": result = await handleAnalyzePatterns(toolArgs); break;

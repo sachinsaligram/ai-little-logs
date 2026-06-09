@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 
-type NappyType = "wet" | "dirty" | "both" | "dry";
+type DiaperType = "wet" | "dirty" | "both" | "dry";
 
-interface LogNappySheetProps {
+interface LogDiaperSheetProps {
   onClose: () => void;
   onLogged: () => void;
 }
 
-export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
-  const [nappyType, setNappyType] = useState<NappyType | null>(null);
+export function LogDiaperSheet({ onClose, onLogged }: LogDiaperSheetProps) {
+  const [diaperType, setDiaperType] = useState<DiaperType | null>(null);
   const [concernFlag, setConcernFlag] = useState(false);
   const [colour, setColour] = useState("");
   const [consistency, setConsistency] = useState("");
@@ -18,19 +18,19 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
   const [error, setError] = useState<string | null>(null);
 
   async function handleConfirm() {
-    if (!nappyType) { setError("Select a diaper type"); return; }
+    if (!diaperType) { setError("Select a diaper type"); return; }
     setLoading(true);
     setError(null);
     try {
       const body: Record<string, unknown> = {
         logged_at: new Date().toISOString(),
-        type: nappyType,
+        type: diaperType,
         concern_flag: concernFlag,
       };
       if (colour) body.colour = colour;
       if (consistency) body.consistency = consistency;
 
-      const res = await fetch("/api/nappy", {
+      const res = await fetch("/api/diaper", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -48,7 +48,7 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
     }
   }
 
-  const typeButtons: { value: NappyType; label: string; emoji: string }[] = [
+  const typeButtons: { value: DiaperType; label: string; emoji: string }[] = [
     { value: "wet", label: "Wet", emoji: "💧" },
     { value: "dirty", label: "Poop", emoji: "💩" },
     { value: "both", label: "Both", emoji: "💧💩" },
@@ -90,14 +90,14 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
             {typeButtons.map(({ value, label, emoji }) => (
               <button
                 key={value}
-                onClick={() => setNappyType(value)}
-                aria-pressed={nappyType === value}
+                onClick={() => setDiaperType(value)}
+                aria-pressed={diaperType === value}
                 style={{
                   padding: "var(--space-4)",
-                  border: `2px solid ${nappyType === value ? "var(--color-primary)" : "var(--color-border)"}`,
+                  border: `2px solid ${diaperType === value ? "var(--color-primary)" : "var(--color-border)"}`,
                   borderRadius: "var(--radius-md)",
-                  backgroundColor: nappyType === value ? "var(--color-primary)" : "var(--color-surface)",
-                  color: nappyType === value ? "var(--color-primary-fg)" : "var(--color-text)",
+                  backgroundColor: diaperType === value ? "var(--color-primary)" : "var(--color-surface)",
+                  color: diaperType === value ? "var(--color-primary-fg)" : "var(--color-text)",
                   fontWeight: 500,
                   display: "flex",
                   flexDirection: "column",
@@ -129,9 +129,9 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
 
         <div style={{ display: "flex", gap: "var(--space-4)" }}>
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
-            <label htmlFor="nappy-colour" style={{ fontSize: "var(--text-sm)" }}>Colour (optional)</label>
+            <label htmlFor="diaper-colour" style={{ fontSize: "var(--text-sm)" }}>Colour (optional)</label>
             <input
-              id="nappy-colour"
+              id="diaper-colour"
               type="text"
               value={colour}
               onChange={(e) => setColour(e.target.value)}
@@ -145,9 +145,9 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
             />
           </div>
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
-            <label htmlFor="nappy-consistency" style={{ fontSize: "var(--text-sm)" }}>Consistency (optional)</label>
+            <label htmlFor="diaper-consistency" style={{ fontSize: "var(--text-sm)" }}>Consistency (optional)</label>
             <input
-              id="nappy-consistency"
+              id="diaper-consistency"
               type="text"
               value={consistency}
               onChange={(e) => setConsistency(e.target.value)}
@@ -166,7 +166,7 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
 
         <button
           onClick={handleConfirm}
-          disabled={loading || !nappyType}
+          disabled={loading || !diaperType}
           style={{
             padding: "var(--space-4)",
             backgroundColor: "var(--color-primary)",
@@ -175,7 +175,7 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
             borderRadius: "var(--radius-md)",
             fontSize: "var(--text-base)",
             fontWeight: 600,
-            opacity: loading || !nappyType ? 0.6 : 1,
+            opacity: loading || !diaperType ? 0.6 : 1,
             transition: "var(--transition-tap)",
           }}
         >

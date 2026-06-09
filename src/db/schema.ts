@@ -64,8 +64,8 @@ export const feed_logs = sqliteTable(
   ]
 );
 
-export const nappy_logs = sqliteTable(
-  "nappy_logs",
+export const diaper_logs = sqliteTable(
+  "diaper_logs",
   {
     id: text("id").primaryKey(),
     baby_id: text("baby_id")
@@ -82,8 +82,8 @@ export const nappy_logs = sqliteTable(
       .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ','now'))`),
   },
   (table) => [
-    index("idx_nappy_baby_logged").on(table.baby_id, table.logged_at),
-    check("nappy_type_check", sql`${table.type} IN ('wet','dirty','both','dry')`),
+    index("idx_diaper_baby_logged").on(table.baby_id, table.logged_at),
+    check("diaper_type_check", sql`${table.type} IN ('wet','dirty','both','dry')`),
     check("concern_flag_check", sql`${table.concern_flag} IN (0,1)`),
   ]
 );

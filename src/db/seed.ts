@@ -34,11 +34,11 @@ async function seed() {
 
   type SleepRow = typeof schema.sleep_logs.$inferInsert;
   type FeedRow = typeof schema.feed_logs.$inferInsert;
-  type NappyRow = typeof schema.nappy_logs.$inferInsert;
+  type DiaperRow = typeof schema.diaper_logs.$inferInsert;
 
   const sleeps: SleepRow[] = [];
   const feeds: FeedRow[] = [];
-  const nappies: NappyRow[] = [];
+  const diapers: DiaperRow[] = [];
 
   for (let day = 7; day >= 2; day--) {
     // ── Night sleep (previous evening → morning) ──────────────────────────
@@ -91,8 +91,8 @@ async function seed() {
     }
 
     // ── Nappies (6 per day) ───────────────────────────────────────────────
-    const nappyTimes = [7, 9, 11, 14, 17, 20];
-    const nappyTypes: Array<{ type: "wet" | "dirty" | "both" | "dry"; colour?: string; concern_flag?: number }> = [
+    const diaperTimes = [7, 9, 11, 14, 17, 20];
+    const diaperTypes: Array<{ type: "wet" | "dirty" | "both" | "dry"; colour?: string; concern_flag?: number }> = [
       { type: "wet" },
       { type: "dirty", colour: "yellow" },
       { type: "wet" },
@@ -100,14 +100,14 @@ async function seed() {
       { type: "wet" },
       { type: "wet" },
     ];
-    // Flag one nappy mid-week as a concern for demo purposes
-    if (day === 4) nappyTypes[3].concern_flag = 1;
+    // Flag one diaper mid-week as a concern for demo purposes
+    if (day === 4) diaperTypes[3].concern_flag = 1;
 
-    for (let i = 0; i < nappyTimes.length; i++) {
-      const { type, colour, concern_flag } = nappyTypes[i];
-      nappies.push({
+    for (let i = 0; i < diaperTimes.length; i++) {
+      const { type, colour, concern_flag } = diaperTypes[i];
+      diapers.push({
         id: id(), baby_id: babyId,
-        logged_at: daysAgo(day - 1, nappyTimes[i]),
+        logged_at: daysAgo(day - 1, diaperTimes[i]),
         type, colour, concern_flag: concern_flag ?? 0,
       });
     }
@@ -115,12 +115,12 @@ async function seed() {
 
   await db.insert(schema.sleep_logs).values(sleeps).onConflictDoNothing();
   await db.insert(schema.feed_logs).values(feeds).onConflictDoNothing();
-  await db.insert(schema.nappy_logs).values(nappies).onConflictDoNothing();
+  await db.insert(schema.diaper_logs).values(diapers).onConflictDoNothing();
 
   console.log(`Seeded baby "${babyId}" (Mia) with:`);
   console.log(`  ${sleeps.length} sleep sessions`);
   console.log(`  ${feeds.length} feed events`);
-  console.log(`  ${nappies.length} nappy changes`);
+  console.log(`  ${diapers.length} diaper changes`);
   console.log("Done.");
 }
 

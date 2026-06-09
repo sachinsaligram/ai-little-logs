@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 
-type EventType = "sleep" | "feed" | "nappy";
+type EventType = "sleep" | "feed" | "diaper";
 
 interface BaseEvent {
   type: EventType;
@@ -24,15 +24,15 @@ interface FeedEvent extends BaseEvent {
   side: string | null;
   amount_ml: number | null;
 }
-interface NappyEvent extends BaseEvent {
-  type: "nappy";
+interface DiaperEvent extends BaseEvent {
+  type: "diaper";
   logged_at: string;
-  nappy_type: string;
+  diaper_type: string;
   concern_flag: number;
   colour: string | null;
 }
 
-type AnyEvent = SleepEvent | FeedEvent | NappyEvent;
+type AnyEvent = SleepEvent | FeedEvent | DiaperEvent;
 
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -95,7 +95,7 @@ function FeedCard({ event }: { event: FeedEvent }) {
   );
 }
 
-function NappyCard({ event }: { event: NappyEvent }) {
+function DiaperCard({ event }: { event: DiaperEvent }) {
   const isConcern = event.concern_flag === 1;
   return (
     <div style={{
@@ -107,7 +107,7 @@ function NappyCard({ event }: { event: NappyEvent }) {
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
           <span style={{ fontSize: "var(--text-sm)", fontWeight: 600 }}>
-            Diaper — {event.nappy_type === "dirty" ? "Poop" : event.nappy_type}
+            Diaper — {event.diaper_type === "dirty" ? "Poop" : event.diaper_type}
           </span>
           {isConcern && (
             <span style={{
@@ -192,9 +192,9 @@ export function EventHistory({ initialItems = [], initialCursor = null }: EventH
                 const fe = item as any;
                 return <FeedCard key={item.id} event={{ ...fe, feed_type: fe.type }} />;
               }
-              if (item.type === "nappy") {
+              if (item.type === "diaper") {
                 const ne = item as any;
-                return <NappyCard key={item.id} event={{ ...ne, nappy_type: ne.type, logged_at: ne.logged_at ?? ne.event_time }} />;
+                return <DiaperCard key={item.id} event={{ ...ne, diaper_type: ne.type, logged_at: ne.logged_at ?? ne.event_time }} />;
               }
               return null;
             })}
