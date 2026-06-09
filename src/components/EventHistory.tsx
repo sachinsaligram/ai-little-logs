@@ -107,7 +107,7 @@ function NappyCard({ event }: { event: NappyEvent }) {
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
           <span style={{ fontSize: "var(--text-sm)", fontWeight: 600 }}>
-            Nappy — {event.nappy_type}
+            Diaper — {event.nappy_type === "dirty" ? "Poop" : event.nappy_type}
           </span>
           {isConcern && (
             <span style={{

@@ -77,12 +77,12 @@ FEEDS (${feedData.length} total):
 - Breast: ${feedCounts.breast}, Bottle: ${feedCounts.bottle}, Solid: ${feedCounts.solid}
 ${feedData.slice(0, 20).map((f) => `- ${f.started_at}: ${f.type}${f.side ? " (" + f.side + ")" : ""}${f.amount_ml ? " " + f.amount_ml + "ml" : ""}`).join("\n") || "No feeds logged"}
 
-NAPPIES (${nappyData.length} total):
-- Wet: ${nappyCounts.wet}, Dirty: ${nappyCounts.dirty}, Both: ${nappyCounts.both}, Dry: ${nappyCounts.dry}, Concerns: ${nappyCounts.concerns}
+DIAPERS (${nappyData.length} total):
+- Wet: ${nappyCounts.wet}, Poop: ${nappyCounts.dirty}, Both: ${nappyCounts.both}, Dry: ${nappyCounts.dry}, Concerns: ${nappyCounts.concerns}
 
 Based on this data, provide:
 1. A concise 2-3 sentence summary of the baby's routine over the past ${days} days
-2. 2-4 specific patterns you notice (e.g. sleep timing, feed frequency, nappy trends)
+2. 2-4 specific patterns you notice (e.g. sleep timing, feed frequency, diaper trends)
 
 Respond ONLY with valid JSON in this exact format:
 {

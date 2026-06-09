@@ -46,7 +46,7 @@ export default function LoginPage() {
         {([
           { icon: "🌙", label: "Sleep" },
           { icon: "🍼", label: "Feed" },
-          { icon: "💧", label: "Nappy" },
+          { icon: "💧", label: "Diaper" },
         ] as const).map(({ icon, label }) => (
           <div key={label} style={{
             display: "flex",
@@ -78,7 +78,7 @@ export default function LoginPage() {
         maxWidth: "320px",
       }}>
         <p style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)", textAlign: "center", lineHeight: 1.6 }}>
-          Track feeds, nappy changes, and sleep sessions — all in one place.
+          Track feeds, diaper changes, and sleep sessions — all in one place.
         </p>
         <form
           action={async () => {

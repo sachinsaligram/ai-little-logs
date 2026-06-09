@@ -157,14 +157,14 @@ export default async function HomePage() {
 
       <section aria-labelledby="nappy-section-heading">
         <h2 id="nappy-section-heading" style={{ ...sectionHeadingStyle, marginBottom: "var(--space-3)" }}>
-          💧 Nappy
+          💧 Diaper
         </h2>
         {recentNappy.length > 0 && (
           <ul style={{ listStyle: "none", marginBottom: "var(--space-3)" }}>
             {recentNappy.map((n, i) => (
               <li key={i} style={logRowStyle}>
                 <span>{formatLogTime(n.logged_at)}</span>
-                <span style={{ color: "var(--color-text)", textTransform: "capitalize" }}>· {n.type}</span>
+                <span style={{ color: "var(--color-text)" }}>· {n.type === "dirty" ? "Poop" : n.type.charAt(0).toUpperCase() + n.type.slice(1)}</span>
               </li>
             ))}
           </ul>

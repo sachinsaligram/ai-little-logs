@@ -67,8 +67,8 @@ ${sleepData.slice(0, 30).map((s) => `  ${s.started_at}: ${s.duration_min ? s.dur
 FEEDS — ${feedData.length} total:
 ${feedData.slice(0, 30).map((f) => `  ${f.started_at}: ${f.type}${f.side ? " (" + f.side + ")" : ""}${f.amount_ml ? " " + f.amount_ml + "ml" : ""}`).join("\n") || "  No feeds logged"}
 
-NAPPIES — ${nappyData.length} total:
-${nappyData.slice(0, 30).map((n) => `  ${n.logged_at}: ${n.type}${n.concern_flag ? " ⚠️" : ""}`).join("\n") || "  No nappies logged"}`;
+DIAPERS — ${nappyData.length} total:
+${nappyData.slice(0, 30).map((n) => `  ${n.logged_at}: ${n.type}${n.concern_flag ? " ⚠️" : ""}`).join("\n") || "  No diapers logged"}`;
 
   try {
     const response = await client.messages.create({

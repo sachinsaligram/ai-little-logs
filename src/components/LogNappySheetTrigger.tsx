@@ -10,7 +10,7 @@ export function LogNappySheetTrigger() {
     <>
       <button
         onClick={() => setOpen(true)}
-        aria-label="Log a nappy change"
+        aria-label="Log a diaper change"
         style={{
           width: "100%",
           padding: "var(--space-4) var(--space-6)",
@@ -23,7 +23,7 @@ export function LogNappySheetTrigger() {
           transition: "var(--transition-tap)",
         }}
       >
-        Log nappy
+        Log diaper
       </button>
       {open && (
         <LogNappySheet

@@ -18,7 +18,7 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
   const [error, setError] = useState<string | null>(null);
 
   async function handleConfirm() {
-    if (!nappyType) { setError("Select a nappy type"); return; }
+    if (!nappyType) { setError("Select a diaper type"); return; }
     setLoading(true);
     setError(null);
     try {
@@ -39,7 +39,7 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
         onLogged();
       } else {
         const data = await res.json();
-        setError(data.error || "Failed to log nappy");
+        setError(data.error || "Failed to log diaper");
       }
     } catch {
       setError("Network error");
@@ -50,7 +50,7 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
 
   const typeButtons: { value: NappyType; label: string; emoji: string }[] = [
     { value: "wet", label: "Wet", emoji: "💧" },
-    { value: "dirty", label: "Dirty", emoji: "💩" },
+    { value: "dirty", label: "Poop", emoji: "💩" },
     { value: "both", label: "Both", emoji: "💧💩" },
     { value: "dry", label: "Dry", emoji: "✓" },
   ];
@@ -59,7 +59,7 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Log nappy change"
+      aria-label="Log diaper change"
       style={{
         position: "fixed",
         inset: 0,
@@ -80,7 +80,7 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
         gap: "var(--space-5)",
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h2 style={{ fontSize: "var(--text-xl)", fontWeight: 600 }}>Log nappy</h2>
+          <h2 style={{ fontSize: "var(--text-xl)", fontWeight: 600 }}>Log diaper</h2>
           <button onClick={onClose} aria-label="Close" style={{ background: "none", border: "none", fontSize: "var(--text-xl)", padding: "var(--space-1)" }}>✕</button>
         </div>
 
@@ -179,7 +179,7 @@ export function LogNappySheet({ onClose, onLogged }: LogNappySheetProps) {
             transition: "var(--transition-tap)",
           }}
         >
-          {loading ? "Logging…" : "Log nappy"}
+          {loading ? "Logging…" : "Log diaper"}
         </button>
       </div>
     </div>
