@@ -1,7 +1,5 @@
-const CACHE_NAME = 'little-logs-shell-v1';
+const CACHE_NAME = 'little-logs-shell-v2';
 const SHELL_ASSETS = [
-  '/',
-  '/login',
   '/manifest.json',
 ];
 
@@ -27,6 +25,11 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Let the browser handle navigation natively — never cache redirects (Safari strict)
+  if (request.mode === 'navigate') {
+    return;
+  }
+
   if (url.pathname.startsWith('/api/')) {
     // Network-first for API calls
     event.respondWith(
@@ -40,7 +43,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for shell assets
+  // Cache-first for static assets
   event.respondWith(
     caches.match(request).then((cached) => cached || fetch(request))
   );
