@@ -20,10 +20,10 @@
 
 **Purpose**: Initialize the Next.js 15 project and shared tooling.
 
-- [ ] T001 Initialize Next.js 15 project with all plan.md dependencies (`next@15`, `drizzle-orm`, `@libsql/client`, `next-auth@5`, `@anthropic-ai/sdk`, `@modelcontextprotocol/sdk`, `ulidx`, `tsx`, `drizzle-kit`)
-- [ ] T002 [P] Configure TypeScript in `tsconfig.json` (strict mode, path aliases for `@/`)
-- [ ] T003 [P] Create `.env.local.example` with all required variables (`TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_EMAIL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `ANTHROPIC_API_KEY`)
-- [ ] T004 [P] Add `drizzle.config.ts` (Turso dialect, points to `src/db/schema.ts`) and npm scripts `db:generate`, `db:push`, `db:seed` to `package.json`
+- [x] T001 Initialize Next.js 15 project with all plan.md dependencies (`next@15`, `drizzle-orm`, `@libsql/client`, `next-auth@5`, `@anthropic-ai/sdk`, `@modelcontextprotocol/sdk`, `ulidx`, `tsx`, `drizzle-kit`)
+- [x] T002 [P] Configure TypeScript in `tsconfig.json` (strict mode, path aliases for `@/`)
+- [x] T003 [P] Create `.env.local.example` with all required variables (`TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_EMAIL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `ANTHROPIC_API_KEY`)
+- [x] T004 [P] Add `drizzle.config.ts` (Turso dialect, points to `src/db/schema.ts`) and npm scripts `db:generate`, `db:push`, `db:seed` to `package.json`
 
 **Checkpoint**: Project initializes; `npm run dev` starts without errors.
 
@@ -35,16 +35,16 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T005 Define Drizzle schema in `src/db/schema.ts` — tables: `babies`, `sleep_logs`, `feed_logs`, `nappy_logs` with all columns, constraints, and indexes from `data-model.md`
-- [ ] T006 Create Drizzle client in `src/db/index.ts` — `@libsql/client` HTTP mode using `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN`; enable `PRAGMA foreign_keys = ON` on connection open
-- [ ] T007 Generate initial Drizzle migration and apply to Turso dev database (`drizzle/migrations/`)
-- [ ] T008 [P] Create `ulidx` wrapper in `src/lib/ulid.ts` — export a `newId(): string` function that returns a ULID
-- [ ] T009 Configure NextAuth v5 in `src/lib/auth.ts` — Google OAuth provider, `signIn` callback that rejects any email ≠ `process.env.NEXTAUTH_EMAIL`, JWT session strategy (no DB adapter)
-- [ ] T010 Create NextAuth route handler at `src/app/api/auth/[...nextauth]/route.ts` — re-export `{ GET, POST }` from `src/lib/auth.ts`
-- [ ] T011 Create auth middleware at `src/middleware.ts` — protect all routes under `/(auth)` and `/api` (except `/api/auth`); redirect unauthenticated requests to `/login`
-- [ ] T012 Create design tokens in `src/app/globals.css` — CSS custom properties: color palette (primary, surface, text, error, warning), spacing scale (4px base: `--space-1` through `--space-8`), type scale (`--text-sm` through `--text-xl`), border-radius, shadow
-- [ ] T013 Create root layout at `src/app/layout.tsx` — HTML shell, import `globals.css`, viewport meta (`width=device-width, initial-scale=1`), PWA manifest link (`<link rel="manifest" href="/manifest.json">`)
-- [ ] T014 Create sign-in page at `src/app/login/page.tsx` — Google sign-in button (calls NextAuth `signIn("google")`), app name, brief message explaining access is restricted
+- [x] T005 Define Drizzle schema in `src/db/schema.ts` — tables: `babies`, `sleep_logs`, `feed_logs`, `nappy_logs` with all columns, constraints, and indexes from `data-model.md`
+- [x] T006 Create Drizzle client in `src/db/index.ts` — `@libsql/client` HTTP mode using `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN`; enable `PRAGMA foreign_keys = ON` on connection open
+- [x] T007 Generate initial Drizzle migration and apply to Turso dev database (`drizzle/migrations/`)
+- [x] T008 [P] Create `ulidx` wrapper in `src/lib/ulid.ts` — export a `newId(): string` function that returns a ULID
+- [x] T009 Configure NextAuth v5 in `src/lib/auth.ts` — Google OAuth provider, `signIn` callback that rejects any email ≠ `process.env.NEXTAUTH_EMAIL`, JWT session strategy (no DB adapter)
+- [x] T010 Create NextAuth route handler at `src/app/api/auth/[...nextauth]/route.ts` — re-export `{ GET, POST }` from `src/lib/auth.ts`
+- [x] T011 Create auth middleware at `src/middleware.ts` — protect all routes under `/(auth)` and `/api` (except `/api/auth`); redirect unauthenticated requests to `/login`
+- [x] T012 Create design tokens in `src/app/globals.css` — CSS custom properties: color palette (primary, surface, text, error, warning), spacing scale (4px base: `--space-1` through `--space-8`), type scale (`--text-sm` through `--text-xl`), border-radius, shadow
+- [x] T013 Create root layout at `src/app/layout.tsx` — HTML shell, import `globals.css`, viewport meta (`width=device-width, initial-scale=1`), PWA manifest link (`<link rel="manifest" href="/manifest.json">`)
+- [x] T014 Create sign-in page at `src/app/login/page.tsx` — Google sign-in button (calls NextAuth `signIn("google")`), app name, brief message explaining access is restricted
 
 **Checkpoint**: `npm run dev` serves `/login`. Completing Google OAuth redirects into the app (or to `/setup` on first sign-in).
 
@@ -58,35 +58,35 @@
 
 ### Baby Profile Setup
 
-- [ ] T015 [US1] Create baby setup API route at `src/app/api/babies/route.ts` — `POST`: validate `name` (required, non-empty string) and `date_of_birth` (required, YYYY-MM-DD); insert into `babies` via Drizzle using `newId()`; return `201 { id }`; return `409` if a baby record already exists
-- [ ] T016 [US1] Create baby setup screen at `src/app/setup/page.tsx` — form with name and date-of-birth inputs; `POST /api/babies` on submit; redirect to `/` on success; show inline validation errors on failure; mobile-first layout using design tokens
+- [x] T015 [US1] Create baby setup API route at `src/app/api/babies/route.ts` — `POST`: validate `name` (required, non-empty string) and `date_of_birth` (required, YYYY-MM-DD); insert into `babies` via Drizzle using `newId()`; return `201 { id }`; return `409` if a baby record already exists
+- [x] T016 [US1] Create baby setup screen at `src/app/setup/page.tsx` — form with name and date-of-birth inputs; `POST /api/babies` on submit; redirect to `/` on success; show inline validation errors on failure; mobile-first layout using design tokens
 
 ### Sleep Logging
 
-- [ ] T017 [US1] Create `POST /api/sleep` route at `src/app/api/sleep/route.ts` — validate `started_at` (required ISO 8601 UTC); query `sleep_logs` for an open session (`ended_at IS NULL`) for this baby; return `409 { error: "open_session_exists" }` if one exists; insert row with `ended_at = NULL`; return `201 { id, duration_min: null }`
-- [ ] T018 [US1] Create `PATCH /api/sleep/[id]` route at `src/app/api/sleep/[id]/route.ts` — accept `ended_at`, `location`, `quality`, `notes` (at least one required); if `ended_at` provided, validate it is after `started_at` (return `422` if not), compute `duration_min`; update the row; return `200 { id, duration_min }`. Scoped to closing open sessions only — closed sessions are immutable per spec clarification.
-- [ ] T019 [P] [US1] Create `LogSleepButton` component at `src/components/LogSleepButton.tsx` — idle state: single "Start sleep" button (`POST /api/sleep` with `started_at = now`); active state: elapsed timer display + optional location/quality inputs + "End sleep" button (`PATCH /api/sleep/:id`); ≤2 taps to start, ≤2 taps to end; 100ms tap feedback per constitution
+- [x] T017 [US1] Create `POST /api/sleep` route at `src/app/api/sleep/route.ts` — validate `started_at` (required ISO 8601 UTC); query `sleep_logs` for an open session (`ended_at IS NULL`) for this baby; return `409 { error: "open_session_exists" }` if one exists; insert row with `ended_at = NULL`; return `201 { id, duration_min: null }`
+- [x] T018 [US1] Create `PATCH /api/sleep/[id]` route at `src/app/api/sleep/[id]/route.ts` — accept `ended_at`, `location`, `quality`, `notes` (at least one required); if `ended_at` provided, validate it is after `started_at` (return `422` if not), compute `duration_min`; update the row; return `200 { id, duration_min }`. Scoped to closing open sessions only — closed sessions are immutable per spec clarification.
+- [x] T019 [P] [US1] Create `LogSleepButton` component at `src/components/LogSleepButton.tsx` — idle state: single "Start sleep" button (`POST /api/sleep` with `started_at = now`); active state: elapsed timer display + optional location/quality inputs + "End sleep" button (`PATCH /api/sleep/:id`); ≤2 taps to start, ≤2 taps to end; 100ms tap feedback per constitution
 
 ### Feed Logging
 
-- [ ] T020 [US1] Create `POST /api/feed` route at `src/app/api/feed/route.ts` — validate `started_at` (required) and `type` (required, `"breast" | "bottle" | "solid"`); reject `side` when `type ≠ "breast"`, reject `amount_ml` when `type ≠ "bottle"`; insert `feed_logs`; return `201 { id }` or `422` with field-level error
-- [ ] T021 [P] [US1] Create `LogFeedSheet` component at `src/components/LogFeedSheet.tsx` — bottom sheet triggered from home; three feed type buttons (breast/bottle/solid) as primary selection; conditional side toggle (L/R/both) for breast; optional amount field for bottle; confirm button; ≤3 taps to log; calls `POST /api/feed`
+- [x] T020 [US1] Create `POST /api/feed` route at `src/app/api/feed/route.ts` — validate `started_at` (required) and `type` (required, `"breast" | "bottle" | "solid"`); reject `side` when `type ≠ "breast"`, reject `amount_ml` when `type ≠ "bottle"`; insert `feed_logs`; return `201 { id }` or `422` with field-level error
+- [x] T021 [P] [US1] Create `LogFeedSheet` component at `src/components/LogFeedSheet.tsx` — bottom sheet triggered from home; three feed type buttons (breast/bottle/solid) as primary selection; conditional side toggle (L/R/both) for breast; optional amount field for bottle; confirm button; ≤3 taps to log; calls `POST /api/feed`
 
 ### Nappy Logging
 
-- [ ] T022 [US1] Create `POST /api/nappy` route at `src/app/api/nappy/route.ts` — validate `logged_at` (required) and `type` (required, `"wet" | "dirty" | "both" | "dry"`); `concern_flag` defaults to `0`; insert `nappy_logs`; return `201 { id }` or `422`
-- [ ] T023 [P] [US1] Create `LogNappySheet` component at `src/components/LogNappySheet.tsx` — bottom sheet triggered from home; four type buttons (wet/dirty/both/dry) as primary selection; concern flag toggle; optional colour and consistency fields; confirm button; ≤3 taps to log; calls `POST /api/nappy`
+- [x] T022 [US1] Create `POST /api/nappy` route at `src/app/api/nappy/route.ts` — validate `logged_at` (required) and `type` (required, `"wet" | "dirty" | "both" | "dry"`); `concern_flag` defaults to `0`; insert `nappy_logs`; return `201 { id }` or `422`
+- [x] T023 [P] [US1] Create `LogNappySheet` component at `src/components/LogNappySheet.tsx` — bottom sheet triggered from home; four type buttons (wet/dirty/both/dry) as primary selection; concern flag toggle; optional colour and consistency fields; confirm button; ≤3 taps to log; calls `POST /api/nappy`
 
 ### History
 
-- [ ] T024 [US1] Create `GET /api/history` route at `src/app/api/history/route.ts` — query params: `from` (default 7 days ago), `to` (default now), `type` (`sleep|feed|nappy|all`, default `all`), `limit` (1–100, default 50), `cursor` (last `id` for pagination); union-query all relevant log tables sorted by event time descending; return `{ items, next_cursor }`
-- [ ] T025 [P] [US1] Create `EventHistory` component at `src/components/EventHistory.tsx` — renders chronological list of all event types; `concern_flag = 1` nappy entries rendered with visually distinct colour/icon per FR-014; load-more pagination button; empty state for no results
+- [x] T024 [US1] Create `GET /api/history` route at `src/app/api/history/route.ts` — query params: `from` (default 7 days ago), `to` (default now), `type` (`sleep|feed|nappy|all`, default `all`), `limit` (1–100, default 50), `cursor` (last `id` for pagination); union-query all relevant log tables sorted by event time descending; return `{ items, next_cursor }`
+- [x] T025 [P] [US1] Create `EventHistory` component at `src/components/EventHistory.tsx` — renders chronological list of all event types; `concern_flag = 1` nappy entries rendered with visually distinct colour/icon per FR-014; load-more pagination button; empty state for no results
 
 ### Screens & Navigation
 
-- [ ] T026 [US1] Create `(auth)` group layout at `src/app/(auth)/layout.tsx` — server component: call `auth()` from NextAuth, redirect to `/login` if no session; query `babies` table and redirect to `/setup` if empty (FR-004a); render page shell with bottom navigation (Home, History, Insights)
-- [ ] T027 [US1] Create home screen at `src/app/(auth)/page.tsx` — renders `LogSleepButton`, feed sheet trigger button, nappy sheet trigger button; queries for open sleep session on load and passes state to `LogSleepButton`; each primary action reachable in ≤3 taps (SC-001)
-- [ ] T028 [US1] Create history screen at `src/app/(auth)/history/page.tsx` — renders `EventHistory`, fetches `GET /api/history` with default params
+- [x] T026 [US1] Create `(auth)` group layout at `src/app/(auth)/layout.tsx` — server component: call `auth()` from NextAuth, redirect to `/login` if no session; query `babies` table and redirect to `/setup` if empty (FR-004a); render page shell with bottom navigation (Home, History, Insights)
+- [x] T027 [US1] Create home screen at `src/app/(auth)/page.tsx` — renders `LogSleepButton`, feed sheet trigger button, nappy sheet trigger button; queries for open sleep session on load and passes state to `LogSleepButton`; each primary action reachable in ≤3 taps (SC-001)
+- [x] T028 [US1] Create history screen at `src/app/(auth)/history/page.tsx` — renders `EventHistory`, fetches `GET /api/history` with default params
 
 **Checkpoint**: Full US1 loop verified on a mobile browser. All 6 acceptance scenarios from spec.md pass (first-time setup, sleep start/end, feed, nappy, auth gate, setup redirect). SC-001 and SC-006 verified.
 
@@ -98,10 +98,10 @@
 
 **Independent Test**: With ≥3 days of logged data, open `/insights`. Summary and at least one pattern appear within 10 seconds. With no data, friendly empty state is shown. With an invalid `ANTHROPIC_API_KEY`, error state renders and the rest of the app remains usable.
 
-- [ ] T029 [US2] Create Anthropic client and prompt builder in `src/lib/claude.ts` — initialise `@anthropic-ai/sdk` with `ANTHROPIC_API_KEY`; export `generateInsights(days: number): Promise<{ summary: string, patterns: string[] }>` that fetches aggregated log counts and durations from Turso, builds a structured prompt (counts, durations, timestamps — no free-text notes for privacy), calls `claude-sonnet-4-5` non-streaming, returns parsed result
-- [ ] T030 [US2] Create `POST /api/insights` route at `src/app/api/insights/route.ts` — accept `{ days?: number }` (default 7, clamp 1–30); return `204` if no log data for the period; call `generateInsights`; return `{ summary, patterns, generated_at }`; catch errors and return `503 { error: "ai_unavailable", message: "..." }`
-- [ ] T031 [P] [US2] Create `InsightsPanel` component at `src/components/InsightsPanel.tsx` — loading state: spinner shown after 300ms (SC-003); success state: summary paragraph + bulleted patterns list; empty state: friendly "Start logging to see insights" message; error state: graceful degradation message without blocking the rest of the app
-- [ ] T032 [US2] Create insights screen at `src/app/(auth)/insights/page.tsx` — renders `InsightsPanel`; calls `POST /api/insights` on mount; passes loading/success/error/empty state to panel
+- [x] T029 [US2] Create Anthropic client and prompt builder in `src/lib/claude.ts` — initialise `@anthropic-ai/sdk` with `ANTHROPIC_API_KEY`; export `generateInsights(days: number): Promise<{ summary: string, patterns: string[] }>` that fetches aggregated log counts and durations from Turso, builds a structured prompt (counts, durations, timestamps — no free-text notes for privacy), calls `claude-sonnet-4-5` non-streaming, returns parsed result
+- [x] T030 [US2] Create `POST /api/insights` route at `src/app/api/insights/route.ts` — accept `{ days?: number }` (default 7, clamp 1–30); return `204` if no log data for the period; call `generateInsights`; return `{ summary, patterns, generated_at }`; catch errors and return `503 { error: "ai_unavailable", message: "..." }`
+- [x] T031 [P] [US2] Create `InsightsPanel` component at `src/components/InsightsPanel.tsx` — loading state: spinner shown after 300ms (SC-003); success state: summary paragraph + bulleted patterns list; empty state: friendly "Start logging to see insights" message; error state: graceful degradation message without blocking the rest of the app
+- [x] T032 [US2] Create insights screen at `src/app/(auth)/insights/page.tsx` — renders `InsightsPanel`; calls `POST /api/insights` on mount; passes loading/success/error/empty state to panel
 
 **Checkpoint**: `/insights` displays AI summary. Loading indicator appears during fetch. SC-003 (≤10s, rest of app usable) verified. Empty and error states render correctly.
 
@@ -113,14 +113,14 @@
 
 **Independent Test**: `npm run mcp:start`; configure Claude Desktop with the stdio server; log one bottle feed via chat; ask for today's summary via chat. Both succeed without using the web UI. SC-004 verified.
 
-- [ ] T033 [US3] Create MCP server scaffold at `src/mcp/server.ts` — initialise `Server` from `@modelcontextprotocol/sdk/server`; use `StdioServerTransport`; set server name `"little-logs"` and version; register all 6 tool definitions with input schemas from `contracts/mcp-tools.md` and placeholder handlers; call `server.connect(transport)`
-- [ ] T034 [US3] Implement `log_sleep` tool handler in `src/mcp/server.ts` — `action=start`: check for open session, insert `sleep_logs`; `action=end`: find open session, set `ended_at`, compute `duration_min`; return plain-text confirmation or error per contract output format
-- [ ] T035 [US3] Implement `log_feed` tool handler in `src/mcp/server.ts` — validate `type`, enforce `side`/`amount_ml` conditional rules; insert `feed_logs`; return confirmation with feed details
-- [ ] T036 [US3] Implement `log_nappy` tool handler in `src/mcp/server.ts` — validate `type`; insert `nappy_logs` with `concern_flag` (default false); return confirmation
-- [ ] T037 [US3] Implement `get_summary` tool handler in `src/mcp/server.ts` — `period=day`: aggregate last 24h; `period=week`: aggregate last 7 days; return formatted plain-text summary (sleep totals, feed counts by type, nappy counts by type)
-- [ ] T038 [US3] Implement `get_events` tool handler in `src/mcp/server.ts` — query `sleep_logs`, `feed_logs`, or `nappy_logs` (or all) filtered by `from`/`to` date range; return formatted list of ≤`limit` records (default 20)
-- [ ] T039 [US3] Implement `analyze_patterns` tool handler in `src/mcp/server.ts` — fetch `days` days of aggregated log data; call `@anthropic-ai/sdk` with same structured prompt strategy as `src/lib/claude.ts`; return analysis text; return no-data message if insufficient logs; return unavailable message on API error
-- [ ] T040 [US3] Add `"mcp:start": "npx tsx src/mcp/server.ts"` to `package.json` scripts
+- [x] T033 [US3] Create MCP server scaffold at `src/mcp/server.ts` — initialise `Server` from `@modelcontextprotocol/sdk/server`; use `StdioServerTransport`; set server name `"little-logs"` and version; register all 6 tool definitions with input schemas from `contracts/mcp-tools.md` and placeholder handlers; call `server.connect(transport)`
+- [x] T034 [US3] Implement `log_sleep` tool handler in `src/mcp/server.ts` — `action=start`: check for open session, insert `sleep_logs`; `action=end`: find open session, set `ended_at`, compute `duration_min`; return plain-text confirmation or error per contract output format
+- [x] T035 [US3] Implement `log_feed` tool handler in `src/mcp/server.ts` — validate `type`, enforce `side`/`amount_ml` conditional rules; insert `feed_logs`; return confirmation with feed details
+- [x] T036 [US3] Implement `log_nappy` tool handler in `src/mcp/server.ts` — validate `type`; insert `nappy_logs` with `concern_flag` (default false); return confirmation
+- [x] T037 [US3] Implement `get_summary` tool handler in `src/mcp/server.ts` — `period=day`: aggregate last 24h; `period=week`: aggregate last 7 days; return formatted plain-text summary (sleep totals, feed counts by type, nappy counts by type)
+- [x] T038 [US3] Implement `get_events` tool handler in `src/mcp/server.ts` — query `sleep_logs`, `feed_logs`, or `nappy_logs` (or all) filtered by `from`/`to` date range; return formatted list of ≤`limit` records (default 20)
+- [x] T039 [US3] Implement `analyze_patterns` tool handler in `src/mcp/server.ts` — fetch `days` days of aggregated log data; call `@anthropic-ai/sdk` with same structured prompt strategy as `src/lib/claude.ts`; return analysis text; return no-data message if insufficient logs; return unavailable message on API error
+- [x] T040 [US3] Add `"mcp:start": "npx tsx src/mcp/server.ts"` to `package.json` scripts
 
 **Checkpoint**: MCP demo loop passes — all 5 acceptance scenarios from spec.md US3 verified via Claude Desktop.
 
@@ -130,12 +130,12 @@
 
 **Purpose**: PWA installability, accessibility compliance, and end-to-end production validation.
 
-- [ ] T041 [P] Create PWA manifest at `public/manifest.json` — `name: "Little Logs"`, `short_name: "LittleLogs"`, `start_url: "/"`, `display: "standalone"`, `theme_color`, `background_color`, `icons` array (at minimum 192×192 and 512×512 PNG entries)
-- [ ] T042 [P] Create service worker at `public/sw.js` — `install` event: pre-cache app shell (HTML, CSS, JS bundles); `activate` event: purge stale caches; `fetch` handler: cache-first for shell assets, network-first for `/api/*` calls
-- [ ] T043 Register service worker in `src/app/layout.tsx` — add `<script>` that calls `navigator.serviceWorker.register('/sw.js')` after load; guard with `'serviceWorker' in navigator` check
-- [ ] T044 Audit and fix accessibility across all screens — WCAG 2.1 AA: focus-visible rings on all interactive elements, ARIA labels on icon-only buttons, `<label>` for all form inputs, colour contrast ≥4.5:1 for text, keyboard navigation for sheets and modals
-- [ ] T045 Validate performance benchmarks — SC-001 (≤3 taps for any event type on real device), SC-002 (home screen ≤2s interactive on mobile connection), SC-003 (insights ≤10s, spinner shown); document any deviation with remediation plan
-- [ ] T046 Run `quickstart.md` validation end-to-end — fresh Vercel deploy, Google OAuth sign-in, first-time baby setup, log all three event types, view insights, run MCP demo loop via Claude Desktop; confirm SC-004, SC-005, SC-006 all pass
+- [x] T041 [P] Create PWA manifest at `public/manifest.json` — `name: "Little Logs"`, `short_name: "LittleLogs"`, `start_url: "/"`, `display: "standalone"`, `theme_color`, `background_color`, `icons` array (at minimum 192×192 and 512×512 PNG entries)
+- [x] T042 [P] Create service worker at `public/sw.js` — `install` event: pre-cache app shell (HTML, CSS, JS bundles); `activate` event: purge stale caches; `fetch` handler: cache-first for shell assets, network-first for `/api/*` calls
+- [x] T043 Register service worker in `src/app/layout.tsx` — add `<script>` that calls `navigator.serviceWorker.register('/sw.js')` after load; guard with `'serviceWorker' in navigator` check
+- [x] T044 Audit and fix accessibility across all screens — WCAG 2.1 AA: focus-visible rings on all interactive elements, ARIA labels on icon-only buttons, `<label>` for all form inputs, colour contrast ≥4.5:1 for text, keyboard navigation for sheets and modals
+- [x] T045 Validate performance benchmarks — SC-001 (≤3 taps for any event type on real device), SC-002 (home screen ≤2s interactive on mobile connection), SC-003 (insights ≤10s, spinner shown); document any deviation with remediation plan
+- [x] T046 Run `quickstart.md` validation end-to-end — fresh Vercel deploy, Google OAuth sign-in, first-time baby setup, log all three event types, view insights, run MCP demo loop via Claude Desktop; confirm SC-004, SC-005, SC-006 all pass
 
 ---
 
