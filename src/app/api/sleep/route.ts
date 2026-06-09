@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/index";
 import { babies, sleep_logs } from "@/db/schema";
 import { newId } from "@/lib/ulid";
-import { eq, isNull } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -22,8 +22,7 @@ export async function POST(req: NextRequest) {
   const openSessions = await db
     .select({ id: sleep_logs.id })
     .from(sleep_logs)
-    .where(eq(sleep_logs.baby_id, babyId))
-    .where(isNull(sleep_logs.ended_at))
+    .where(and(eq(sleep_logs.baby_id, babyId), isNull(sleep_logs.ended_at)))
     .limit(1);
 
   if (openSessions.length > 0) {

@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       .where(and(...conditions))
       .limit(limit);
     rows.forEach((r) =>
-      items.push({ type: "sleep", id: r.id, event_time: r.started_at, ...r })
+      items.push({ ...r, type: "sleep", event_time: r.started_at })
     );
   }
 
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
       .where(and(...conditions))
       .limit(limit);
     rows.forEach((r) =>
-      items.push({ type: "feed", id: r.id, event_time: r.started_at, ...r })
+      items.push({ ...r, type: "feed", event_time: r.started_at })
     );
   }
 
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
       .where(and(...conditions))
       .limit(limit);
     rows.forEach((r) =>
-      items.push({ type: "nappy", id: r.id, event_time: r.logged_at, ...r })
+      items.push({ ...r, type: "nappy", event_time: r.logged_at })
     );
   }
 

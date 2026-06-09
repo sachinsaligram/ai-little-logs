@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/index";
 import { sleep_logs } from "@/db/schema";
-import { eq, isNull } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 export async function PATCH(
   req: NextRequest,
@@ -19,8 +19,7 @@ export async function PATCH(
   const rows = await db
     .select()
     .from(sleep_logs)
-    .where(eq(sleep_logs.id, id))
-    .where(isNull(sleep_logs.ended_at))
+    .where(and(eq(sleep_logs.id, id), isNull(sleep_logs.ended_at)))
     .limit(1);
 
   if (!rows.length) {
