@@ -1,13 +1,15 @@
 {
+  "worktree": {
+    "bgIsolation": "none"
+  },
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash(git commit*)",
         "hooks": [
           {
             "type": "prompt",
-            "if": "Bash(git commit*)",
-            "prompt": "Inspect the git commit command in this tool call. A valid commit message MUST follow these rules: (1) Subject line — concise, ideally under 72 characters, written in imperative mood. MUST start with an uppercase letter. MUST NOT begin with a conventional commit prefix such as 'feat:', 'fix:', 'chore:', 'docs:', 'refactor:', 'style:', 'test:', or any other 'word:' prefix — just start directly with the message. (2) Body description — one or more sentences explaining WHY the change was made, not just what files changed. Check whether the -m flags or heredoc in the command satisfy all three rules. If any rule is violated, block the commit and explain exactly which rule was broken and how to fix it. If all rules are satisfied, approve it.",
+            "prompt": "Inspect the git commit command in this tool call. A valid commit message MUST follow these rules: (1) Subject line \u2014 concise, ideally under 72 characters, written in imperative mood. MUST start with an uppercase letter. MUST NOT begin with a conventional commit prefix such as 'feat:', 'fix:', 'chore:', 'docs:', 'refactor:', 'style:', 'test:', or any other 'word:' prefix \u2014 just start directly with the message. (2) Body description \u2014 one or more sentences explaining WHY the change was made, not just what files changed. Check whether the -m flags or heredoc in the command satisfy all three rules. If any rule is violated, block the commit and explain exactly which rule was broken and how to fix it. If all rules are satisfied, approve it.",
             "continueOnBlock": true,
             "statusMessage": "Reviewing commit message..."
           }
