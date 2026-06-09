@@ -40,7 +40,7 @@ async function seed() {
   const feeds: FeedRow[] = [];
   const nappies: NappyRow[] = [];
 
-  for (let day = 7; day >= 1; day--) {
+  for (let day = 7; day >= 2; day--) {
     // ── Night sleep (previous evening → morning) ──────────────────────────
     const nightStart = daysAgo(day, 20, 30);           // 8:30 PM
     const nightEnd   = daysAgo(day - 1, 6, 15);        // 6:15 AM next day

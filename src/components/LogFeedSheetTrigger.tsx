@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LogFeedSheet } from "./LogFeedSheet";
 
 export function LogFeedSheetTrigger() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -28,7 +30,7 @@ export function LogFeedSheetTrigger() {
       {open && (
         <LogFeedSheet
           onClose={() => setOpen(false)}
-          onLogged={() => setOpen(false)}
+          onLogged={() => { setOpen(false); router.refresh(); }}
         />
       )}
     </>

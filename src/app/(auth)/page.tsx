@@ -7,10 +7,7 @@ import { handleSignOut } from "./actions";
 import { LogSleepButton } from "@/components/LogSleepButton";
 import { LogFeedSheetTrigger } from "@/components/LogFeedSheetTrigger";
 import { LogNappySheetTrigger } from "@/components/LogNappySheetTrigger";
-
-function formatLogTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-}
+import { LocalTime } from "@/components/LocalTime";
 
 function formatDuration(min: number): string {
   const h = Math.floor(min / 60);
@@ -125,7 +122,7 @@ export default async function HomePage() {
           <ul style={{ listStyle: "none", marginBottom: "var(--space-3)" }}>
             {recentSleep.map((s, i) => (
               <li key={i} style={logRowStyle}>
-                <span>{formatLogTime(s.started_at)}</span>
+                <span><LocalTime iso={s.started_at} /></span>
                 {s.duration_min != null && (
                   <span style={{ color: "var(--color-text)" }}>· {formatDuration(s.duration_min)}</span>
                 )}
@@ -144,7 +141,7 @@ export default async function HomePage() {
           <ul style={{ listStyle: "none", marginBottom: "var(--space-3)" }}>
             {recentFeed.map((f, i) => (
               <li key={i} style={logRowStyle}>
-                <span>{formatLogTime(f.started_at)}</span>
+                <span><LocalTime iso={f.started_at} /></span>
                 <span style={{ color: "var(--color-text)", textTransform: "capitalize" }}>
                   · {f.type}{f.side ? ` (${f.side})` : ""}
                 </span>
@@ -163,7 +160,7 @@ export default async function HomePage() {
           <ul style={{ listStyle: "none", marginBottom: "var(--space-3)" }}>
             {recentNappy.map((n, i) => (
               <li key={i} style={logRowStyle}>
-                <span>{formatLogTime(n.logged_at)}</span>
+                <span><LocalTime iso={n.logged_at} /></span>
                 <span style={{ color: "var(--color-text)" }}>· {n.type === "dirty" ? "Poop" : n.type.charAt(0).toUpperCase() + n.type.slice(1)}</span>
               </li>
             ))}

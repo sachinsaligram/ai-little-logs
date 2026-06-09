@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LogNappySheet } from "./LogNappySheet";
 
 export function LogNappySheetTrigger() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -28,7 +30,7 @@ export function LogNappySheetTrigger() {
       {open && (
         <LogNappySheet
           onClose={() => setOpen(false)}
-          onLogged={() => setOpen(false)}
+          onLogged={() => { setOpen(false); router.refresh(); }}
         />
       )}
     </>

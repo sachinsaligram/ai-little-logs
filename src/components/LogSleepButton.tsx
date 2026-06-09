@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 type OpenSession = { id: string; started_at: string } | null;
 
@@ -20,6 +21,7 @@ function formatElapsed(ms: number): string {
 
 export function LogSleepButton({ initialOpenSession }: LogSleepButtonProps) {
   const [openSession, setOpenSession] = useState<OpenSession>(initialOpenSession ?? null);
+  const router = useRouter();
   const [elapsed, setElapsed] = useState<number>(0);
   const [location, setLocation] = useState("");
   const [quality, setQuality] = useState<number | "">("");
@@ -52,6 +54,7 @@ export function LogSleepButton({ initialOpenSession }: LogSleepButtonProps) {
       const data = await res.json();
       if (res.ok) {
         setOpenSession({ id: data.id, started_at: new Date().toISOString() });
+        router.refresh();
       } else {
         setError(data.error || "Failed to start sleep");
       }
@@ -82,6 +85,7 @@ export function LogSleepButton({ initialOpenSession }: LogSleepButtonProps) {
         setOpenSession(null);
         setLocation("");
         setQuality("");
+        router.refresh();
       } else {
         const data = await res.json();
         setError(data.error || "Failed to end sleep");
