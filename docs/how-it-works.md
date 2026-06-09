@@ -12,7 +12,8 @@ Little Logs is a mobile-first baby tracking app with two independent ways to int
 4. [Web UI — Logging Events](#web-ui--logging-events)
 5. [AI Insights](#ai-insights)
 6. [MCP — Natural Language Access via Claude Desktop](#mcp--natural-language-access-via-claude-desktop)
-7. [Architecture Diagram](#architecture-diagram)
+7. [Environment Variables](#environment-variables)
+8. [Architecture Diagram](#architecture-diagram)
 
 ---
 
@@ -176,6 +177,25 @@ The **MCP (Model Context Protocol) server** is a local process that runs alongsi
 
 ### Setup
 See [quickstart.md](../quickstart.md#step-6--mcp-demo-loop-sc-004) for configuration instructions.
+
+---
+
+## Environment Variables
+
+All configuration is managed through environment variables. For local development these live in `.env.local`; for production they are set in the Vercel dashboard.
+
+| Variable | Required by | Description |
+|---|---|---|
+| `TURSO_DATABASE_URL` | Web app + MCP server | libSQL connection URL for your Turso database — format: `libsql://<db-name>.turso.io` |
+| `TURSO_AUTH_TOKEN` | Web app + MCP server | Auth token for the Turso database, generated via `turso db tokens create <db-name>` |
+| `NEXTAUTH_URL` | Web app | Full public URL of the deployed app — e.g. `https://ai-little-logs.vercel.app`. Used by NextAuth to construct OAuth callback URLs. |
+| `NEXTAUTH_SECRET` | Web app | Random secret used to sign session cookies — generate with `openssl rand -base64 32` |
+| `NEXTAUTH_EMAIL` | Web app | The single Google email address permitted to sign in — all other accounts are rejected |
+| `GOOGLE_CLIENT_ID` | Web app | OAuth 2.0 Client ID from Google Cloud Console |
+| `GOOGLE_CLIENT_SECRET` | Web app | OAuth 2.0 Client Secret from Google Cloud Console |
+| `ANTHROPIC_API_KEY` | Web app + MCP server | Anthropic API key used for the insights panel and the MCP `analyze_patterns` tool |
+
+> The MCP server reads `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, and `ANTHROPIC_API_KEY` directly from the environment when started. These are passed via the `env` block in the Claude Desktop config — see [quickstart.md](../quickstart.md#6a--configure-claude-desktop).
 
 ---
 
