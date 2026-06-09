@@ -35,7 +35,7 @@ A **mobile-first baby tracking PWA** — log sleeps, feeds, and nappy changes wi
 | MCP + Claude Desktop | Natural language — ask & log in plain English |
 
 **Stack:** Next.js 15 · Turso (SQLite edge DB) · Drizzle ORM · NextAuth v5 · Anthropic SDK  
-**Deploy:** Vercel (web) + local Node process (MCP)
+**Deploy:** Vercel (web) + GitHub
 
 ---
 
@@ -73,6 +73,7 @@ Custom project description + plan fed directly into Claude Code → broken, disc
 
 - **Test incrementally after each feature, not at the end** — rather than implementing all tasks and testing in one go, validate each piece as it lands: get login working and confirmed before moving to the first button, get sleep logging solid before adding feeds, and so on; catching issues at the boundary of each feature is far cheaper than untangling them across a fully-built app
 - **Use something like Playwright MCP to automate that validation** — rather than manually checking each feature, a Playwright MCP server could let Claude drive the browser and verify behaviour as part of the same implementation loop; test and build in the same context, no context switching
+- **Use SpecKit for follow-up work, not just the initial build** — once the SpecKit tasks were done, subsequent improvements and iterations were handled ad-hoc in Claude's plan mode; feeding those follow-up changes back through SpecKit's spec → tasks flow would have kept the implementation more structured and consistent
 
 ---
 
