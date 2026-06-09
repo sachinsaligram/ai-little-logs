@@ -1,0 +1,79 @@
+:root {
+  /* Color palette */
+  --color-primary: #4f7cac;
+  --color-primary-hover: #3d6290;
+  --color-primary-fg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #f8f9fa;
+  --color-surface-overlay: rgba(0, 0, 0, 0.5);
+  --color-bg: #f5f5f5;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+  --color-error: #dc2626;
+  --color-warning: #d97706;
+  --color-success: #16a34a;
+  --color-concern: #ef4444;
+
+  /* Spacing (4px base scale) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+
+  /* Type scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.10);
+
+  /* Tap feedback transition */
+  --transition-tap: 100ms ease;
+}
+
+/* Base reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
